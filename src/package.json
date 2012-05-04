@@ -1,5 +1,5 @@
 {
-	"version": "0.2.0",
+	"version": "0.2.1pre",
 	"author": "Julian Aubourg <j@ubourg.net> (http://jaubourg.net/)",
 	"description": "minimal yet very useful synchronization primitive on top of jQuery Deferreds",
 	"url": "https://github.com/jaubourg/fence"
