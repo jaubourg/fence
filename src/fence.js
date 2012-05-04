@@ -49,7 +49,7 @@
 							}
 						});
 					} else if ( fn && typeof fn.promise === "function" ) {
-						ret = fn.pipe(
+						ret = fn.promise().pipe(
 								function() {
 									tick();
 									return fn;
