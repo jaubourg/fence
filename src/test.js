@@ -74,6 +74,38 @@
 			});
 		},
 
+		"synchro with promises - observables (not a direct promise)": function( test ) {
+			test.expect( 4 );
+
+			function create( delay ) {
+				return {
+					promise: Deferred(function( defer ) {
+							setTimeout( defer.resolve, delay );
+						}).done(function() {
+							test.ok( true, "first timer sypro ok" );
+						}).fail(function() {
+							test.ok( false, "first timer sypro fail" );
+						}).promise
+				};
+			}
+
+			Fence(function( join, release ) {
+
+				join( create( Math.random() * 50 ) );
+				join( create( 100 + Math.random() * 100 ) );
+
+				release( "hello" );
+
+			}).done(function( value ) {
+				test.strictEqual( this, global, "context is ok" );
+				test.strictEqual( value, "hello", "resolve value is ok" );
+				test.done();
+			}).fail(function() {
+				test.ok( false, "global failed" );
+				test.done();
+			});
+		},
+
 		"synchro with promises - error": function( test ) {
 			test.expect( 4 );
 
