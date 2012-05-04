@@ -1,6 +1,6 @@
 var fs = require("fs"),
 	path = require("path"),
-	Fence = require("../../lib/fence");
+	Fence = require("../../dist/node/lib/fence");
 
 module.exports = function inspect( file, callback ) {
 	fs.stat( file, function( err, stat ) {
