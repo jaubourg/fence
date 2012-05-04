@@ -144,6 +144,29 @@
 			});
 		},
 
+		"dynamic promise": function( test ) {
+			test.expect( 1 );
+
+			Fence(function( join, release ) {
+				var count = 0;
+
+				join({
+					promise: function() {
+						return Deferred(function( defer ) {
+							var tmp = ++count;
+							setTimeout(function() {
+								defer.resolve( tmp );
+							}, 10 );
+						}).promise.apply( this, arguments );
+					}
+				}).done( release );
+
+			}).done(function( value ) {
+				test.strictEqual( value, 1 );
+				test.done();
+			});
+		},
+
 		"abort": function( test ) {
 			test.expect( 1 );
 
@@ -168,8 +191,34 @@
 			});
 		},
 
+		"abort (inside)": function( test ) {
+			test.expect( 1 );
+
+			Fence(function( join, release, abort ) {
+
+				setTimeout( join(function() {
+					test.ok( false, "first timer abort ok" );
+				}), Math.random() * 100 );
+
+				setTimeout( join(function() {
+					test.ok( false, "second timer abort ok" );
+				}), 100 + Math.random() * 100 );
+
+				release( "hello" );
+
+				abort( "cancel" );
+
+			}).done(function() {
+				test.ok( false, "done" );
+			}).fail(function( value ) {
+				test.strictEqual( value, "cancel", "proper rejection value" );
+			}).always(function() {
+				test.done();
+			});
+		},
+
 		"abort (global)": function( test ) {
-			test.expect( 6 );
+			test.expect( 7 );
 
 			var f = Fence(function( join, release ) {
 
@@ -177,11 +226,11 @@
 					test.ok( false, "function timer ok" );
 				}), 100 + Math.random() * 100 );
 
-				join( abortable( test, {
+				test.strictEqual( join( abortable( test, {
 					title: "first",
 					abort: true,
 					success: true
-				}) );
+				}) ).promise().abort, undefined, "abort method is not part of the promise" );
 
 				join( abortable( test, {
 					title: "second",

@@ -1,7 +1,7 @@
 (function( Deferred ) {
 
-	var global = this,
-		noop = function() {};
+	function noop() {
+	}
 
 	function once( fn ) {
 		var ret;
@@ -14,6 +14,8 @@
 			return ret;
 		};
 	}
+
+	var global = this;
 
 	return function( block ) {
 		var count = 1,
@@ -33,51 +35,55 @@
 			return this;
 		}
 		block(
-			function( fn ) {
-				var ret;
+			function( object ) {
+				var filtered, promise, pAbort;
 				if ( !count && defer.state() !== "rejected" ) {
 					throw "cannot add sync points to a fence that already completed";
 				}
 				if ( count ) {
 					count++;
-					if ( typeof fn === "function" ) {
-						ret = once(function() {
+					if ( typeof object === "function" ) {
+						filtered = once(function() {
 							if ( count ) {
-								var tmp = fn.apply( this, arguments );
+								var tmp = object.apply( this, arguments );
 								tick();
 								return tmp;
 							}
 						});
-					} else if ( fn && typeof fn.promise === "function" ) {
-						ret = fn.promise().pipe(
+					} else if ( object && typeof object.promise === "function" ) {
+						filtered = (( promise = object.promise() )).pipe(
 								function() {
 									tick();
-									return fn;
+									return promise;
 								},
 								function() {
 									// No need to abort anymore
-									fn = undefined;
+									pAbort = undefined;
 									// We need to abort everyone is not done already
 									abort.apply( this, arguments );
 									// Never notify errors, leave as pending
 									return Deferred().promise();
 								}
 						);
-						if ( typeof fn.abort === "function" ) {
-							defer.fail(( ret.abort = once(function() {
-								return fn && fn.abort.apply( fn, arguments );
-							}) ));
+						if ( typeof (( pAbort = object.abort )) === "function" ) {
+							filtered = filtered.promise({
+								abort: once(function() {
+									return pAbort && pAbort.apply( object, arguments );
+								})
+							});
+							defer.fail( filtered.abort );
 						}
 					} else {
-						ret = once(tick);
+						filtered = once( tick );
 					}
 				}
-				return ret || noop;
+				return filtered || noop;
 			},
 			once(function() {
 				resolveContext = [ this, arguments ];
 				tick();
-			})
+			}),
+			abort
 		);
 		return defer.promise({
 			abort: abort
