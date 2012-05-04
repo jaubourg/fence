@@ -6,7 +6,7 @@ _Latest version of Fence is version 0.1.1_
 
 ## What is it?
 
-See our [Introduction to Fence](/jaubourg/fence/blob/master/doc/intro.md).
+See our [Introduction to Fence](/jaubourg/fence/blob/master/doc/intro.md#introduction-to-fence).
 
 ## Installation
 
