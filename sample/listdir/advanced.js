@@ -3,18 +3,18 @@ var fs = require("fs"),
 	Fence = require("../../dist/node/lib/fence");
 
 module.exports = function( filename ) {
-	return Fence(function( join, release ) {
+	return Fence(function( join, release, abort ) {
 		(function inspect( file, callback ) {
-			fs.stat( file, function( err, stat ) {
+			fs.stat( file, join(function( err, stat ) {
 				if ( err ) {
-					throw err;
+					return abort( err );
 				}
 				if ( !stat.isDirectory() ) {
 					return callback( stat );
 				}
-				fs.readdir( file, function( err, files ) {
+				fs.readdir( file, join(function( err, files ) {
 					if ( err ) {
-						throw err;
+						return abort( err );
 					}
 					var dir = {
 						".": stat
@@ -25,8 +25,8 @@ module.exports = function( filename ) {
 						}) );
 					});
 					callback( dir );
-				});
-			});
+				}) );
+			}) );
 		})( filename, release );
 	});
 };
