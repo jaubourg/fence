@@ -230,7 +230,7 @@ module.exports = function inspect( file ) {
 ```
 
 Not quite there yet:
-* it's about [60% slower](#performance-comparison),
+* it's about [60% slower](#performance-comparison)
 * but: no count management, no `when` trickeries, no `pipe` chains
 * as a consequence, it's less nested and, together with the use of `abort` and `release` it makes for code that is quite easy to follow
 * however, the calls to `join` are a bit sneaky at times, especially regarding the `done` callback of the nested `inspect`
@@ -280,3 +280,5 @@ Looks nice, doesn't it?
 Let's see:
 * it's just the [callback-based implementation](#callback-based-implementation) simplified (no count management, less nesting), pretty much anybody can read it
 * it's only about [6% slower](#performance-comparison) yet returns a promise
+
+Of course, you could just embed the callback-based logic in a Deferred but, then, you would still have to count manually and you wouldn't benefit from the inhibition of all joined functions if and when an error occurs. 
