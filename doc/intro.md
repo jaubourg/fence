@@ -31,7 +31,7 @@ $.when.apply( $, arrayOfPromises ).done(function() {
 
 Of course, it looks a little awkward but it gets the job done, right? Yes and no.
 
-However, `when` has some issues:
+See, `when` has some serious issues:
 * it's quite difficult to deal with recursive asynchronous tasks elegantly without sacrificing performance
 * recursion also involves recursive structures as an output and `when` always resolves with an unflexible list of arguments
 * even without recursion, whenever tasks have to be chained, the cost of creating internal Deferreds can become an issue
