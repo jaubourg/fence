@@ -1,6 +1,6 @@
 # Use Cases
 
-All of these use-cases described in this folder can be executed from the root directory:
+All of the use-cases described in this folder can be executed from the root directory:
 
 `node use-case <name-of-use-case>`
 
