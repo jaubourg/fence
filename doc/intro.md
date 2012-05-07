@@ -39,7 +39,7 @@ See, `when` has some serious issues:
 * "promifying" your API can introduce a lot of noise and can quickly make code more cryptic
 * when a task fails, the resulting join fails, which is fine, but all the tasks already initiated will continue as if nothing happened (their result will simply be ignored by the join)
 
-If you're wondering where all the points above come from, just take a look at an [advanced use case](/jaubourg/fence/blob/master/doc/use-case/ls-R.md).
+If you're wondering where all the points above come from, just take a look at an [advanced use case](/jaubourg/fence/blob/master/doc/use-case/ls-R.md#ls--r-in-nodejs).
 
 It's alright though, seeing as, most of the time, you'll find yourself joining between a few promises in a non-critical part of your application. For more advanced situations, though, another tool could come in handy. 
 
