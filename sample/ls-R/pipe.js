@@ -29,12 +29,10 @@ function readdir( file ) {
 module.exports = function inspect( file ) {
 	return stat( file ).pipe(function( stat ) {
 		if ( !stat.isDirectory() ) {
-			return stat;
+			return true;
 		}
 		return readdir( file ).pipe(function( files ) {
-				var dir = {
-						".": stat
-					};
+				var dir = {};
 				return Deferred.when.apply( Deferred, files.map(function( sub ) {
 					return inspect( path.join( file, sub ) ).done(function( data ) {
 						dir[ sub ] = data;

@@ -21,15 +21,13 @@ module.exports = function inspect( file, callback ) {
 		if ( err ) {
 			error( err );
 		} else if ( !stat.isDirectory() ) {
-			success( stat );
+			success( true );
 		} else {
 			fs.readdir( file, function( err, files ) {
 				if ( err ) {
 					error( err );
 				} else {
-					var dir = {
-							".": stat
-						};
+					var dir = {};
 					count = 1;
 					files.forEach(function( sub ) {
 						count++;

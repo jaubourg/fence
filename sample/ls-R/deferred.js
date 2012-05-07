@@ -8,15 +8,13 @@ module.exports = function inspect( file ) {
 			if ( err ) {
 				defer.reject( err );
 			} else  if ( !stat.isDirectory() ) {
-				defer.resolve( stat );
+				defer.resolve( true );
 			} else {
 				fs.readdir( file, function( err, files ) {
 					if ( err ) {
 						defer.reject( err );
 					} else {
-						var dir = {
-								".": stat
-							};
+						var dir = {};
 						Deferred.when.apply( Deferred, files.map(function( sub ) {
 							return inspect( path.join( file, sub ) ).done(function( data ) {
 								dir[ sub ] = data;

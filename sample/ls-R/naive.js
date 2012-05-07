@@ -8,18 +8,16 @@ module.exports = function inspect( file ) {
 			if ( err ) {
 				abort( err );
 			} else if ( !stat.isDirectory() ) {
-				release( stat );
+				release( true );
 			} else {
 				fs.readdir( file, join(function( err, files ) {
 					if ( err ) {
 						abort( err );
 					} else {
-						var dir = {
-							".": stat
-						};
+						var dir = {};
 						files.forEach(function( sub ) {
-							inspect( path.join( file, sub ) ).done(join(function( value ) {
-								dir[ sub ] = value;
+							inspect( path.join( file, sub ) ).done(join(function( data ) {
+								dir[ sub ] = data;
 							}));
 						});
 						release( dir );

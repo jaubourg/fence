@@ -7,25 +7,24 @@ module.exports = function( filename ) {
 		(function inspect( file, callback ) {
 			fs.stat( file, join(function( err, stat ) {
 				if ( err ) {
-					return abort( err );
+					abort( err );
+				} else if ( !stat.isDirectory() ) {
+					callback( true );
+				} else {
+					fs.readdir( file, join(function( err, files ) {
+						if ( err ) {
+							abort( err );
+						} else {
+							var dir = {};
+							files.forEach(function( sub ) {
+								inspect( path.join( file, sub ), join(function( data ) {
+									dir[ sub ] = data;
+								}) );
+							});
+							callback( dir );
+						}
+					}) );
 				}
-				if ( !stat.isDirectory() ) {
-					return callback( stat );
-				}
-				fs.readdir( file, join(function( err, files ) {
-					if ( err ) {
-						return abort( err );
-					}
-					var dir = {
-						".": stat
-					};
-					files.forEach(function( sub ) {
-						inspect( path.join( file, sub ), join(function( value ) {
-							dir[ sub ] = value;
-						}) );
-					});
-					callback( dir );
-				}) );
 			}) );
 		})( filename, release );
 	});
