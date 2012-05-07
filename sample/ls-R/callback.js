@@ -2,45 +2,37 @@ var fs = require("fs"),
 	path = require("path");
 
 module.exports = function inspect( file, callback ) {
-	var count = 1;
-	function error( err ) {
-		var tmp = callback;
-		if ( tmp ) {
-			callback = undefined;
-			tmp( err );
-		}
-	}
-	function success( value ) {
-		var tmp = callback;
-		if ( tmp && !( --count ) ) {
-			callback = undefined;
-			tmp( undefined, value );
-		}
-	}
 	fs.stat( file, function( err, stat ) {
 		if ( err ) {
-			error( err );
+			callback( err );
 		} else if ( !stat.isDirectory() ) {
-			success( true );
+			callback( undefined, true );
 		} else {
 			fs.readdir( file, function( err, files ) {
 				if ( err ) {
-					error( err );
+					callback( err );
 				} else {
-					var dir = {};
-					count = 1;
-					files.forEach(function( sub ) {
-						count++;
-						inspect( path.join( file, sub ), function( err, data ) {
-							if ( err ) {
-								error( err );
-							} else {
-								dir[ sub ] = data;
-								success( dir );
-							}
+					var dir = {},
+						count = files.length;
+					if ( count ) {
+						files.forEach(function( sub ) {
+							inspect( path.join( file, sub ), function( err, data ) {
+								if ( count ) {
+									if ( err ) {
+										callback( err );
+										count = 0;
+									} else {
+										dir[ sub ] = data;
+										if ( !( --count ) ) {
+											callback( undefined, dir );
+										}
+									}
+								}
+							});
 						});
-					});
-					success( dir );
+					} else {
+						callback( undefined, dir );
+					}
 				}
 			});
 		}
