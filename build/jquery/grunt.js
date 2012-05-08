@@ -12,7 +12,7 @@ module.exports = function( grunt ) {
 
 	grunt.initConfig({
 		meta: {
-			banner: "/*! jQuery fence v@VERSION@ | GPLv2/MIT License */"
+			banner: "/*! jQuery Fence v@VERSION@ | GPLv2/MIT License */"
 		},
 		build: {
 			"dist/jquery.fence.@VERSION@.js": [ "src/jquery.fence.js" ]
