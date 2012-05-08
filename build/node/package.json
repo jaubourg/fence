@@ -6,7 +6,7 @@
 	"homepage": "@URL@",
 	"main": "lib/fence.js",
 	"dependencies": {
-		"JQDeferred": "1.x"
+		"JQDeferred": ">1.6"
 	},
 	"devDependencies": {
 		"nodeunit": "1.x"
