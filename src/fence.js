@@ -37,9 +37,6 @@
 		block(
 			function( object ) {
 				var filtered, promise, pAbort;
-				if ( !count && defer.state() !== "rejected" ) {
-					throw "cannot add sync points to a fence that already completed";
-				}
 				if ( count ) {
 					count++;
 					if ( typeof object === "function" ) {
@@ -62,13 +59,16 @@
 									// We need to abort everyone is not done already
 									abort.apply( this, arguments );
 									// Never notify errors, leave as pending
-									return Deferred().promise();
+									return promise;
 								}
 						);
 						if ( typeof (( pAbort = object.abort )) === "function" ) {
 							filtered = filtered.promise({
 								abort: once(function() {
-									return pAbort && pAbort.apply( object, arguments );
+									if ( pAbort ) {
+										pAbort.apply( object, arguments );
+									}
+									return this;
 								})
 							});
 							defer.fail( filtered.abort );
@@ -76,6 +76,8 @@
 					} else {
 						filtered = once( tick );
 					}
+				} else if( defer.state() !== "rejected" ) {
+					throw "cannot add sync points to a fence that already completed";
 				}
 				return filtered || noop;
 			},

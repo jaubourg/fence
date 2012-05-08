@@ -251,7 +251,7 @@
 		},
 
 		"abort (local)": function( test ) {
-			test.expect( 7 );
+			test.expect( 8 );
 
 			var bob, f = Fence(function( join, release ) {
 
@@ -266,7 +266,7 @@
 				}).fail(function() {
 					test.ok( true, "Fail handlers attached before are fired" );
 				}) ).fail(function() {
-					test.ok( false, "Fail handlers attached afer are never fired" );
+					test.ok( true, "Fail handlers attached afer are fired" );
 				});
 
 				setTimeout(function() {
@@ -287,7 +287,9 @@
 			}).fail(function( value ) {
 				test.strictEqual( this, bob, "context is ok" );
 				test.strictEqual( value, "local abort", "reject value is ok" );
-				test.done();
+				setTimeout(function() {
+					test.done();
+				}, 10 );
 			});
 		},
 
