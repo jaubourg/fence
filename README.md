@@ -2,7 +2,7 @@
 
 A minimal yet very useful synchronization primitive on top of jQuery Deferreds that is available as a jQuery plugin client-side and a npm package for node server-side.
 
-_Latest version of Fence is version 0.2.0_
+_Latest version of Fence is version 0.3.0_
 
 ## What is it?
 
@@ -28,8 +28,8 @@ var Fence = require( "fence" );
 [Download](/jaubourg/fence/downloads) the minified or full-text version of the plugin and drop it into your project.
 
 Then:
-* put a script tag to load the plugin in your html: `<script src="path/to/js/fence.0.2.0.js"></script>`
-* OR use your favorite script loader: `yepnope( "path/to/js/fence.0.2.0.js" );`
+* put a script tag to load the plugin in your html: `<script src="path/to/js/fence.0.3.0.js"></script>`
+* OR use your favorite script loader: `yepnope( "path/to/js/fence.0.3.0.js" );`
 
 After that, Fence is available as `jQuery.Fence`, that simple.
 
@@ -39,7 +39,7 @@ To build Fence yourself, you need node.
 
 1. clone the repository: `git clone git://github.com/jaubourg/fence.git`
 2. enter the newly created directory: `cd fence`
-3. checkout the [version](/jaubourg/fence/tags) you want to build: `git checkout 0.2.0`
+3. checkout the [version](/jaubourg/fence/tags) you want to build: `git checkout 0.3.0`
 4. install [wrench](/ryanmcgrath/wrench-js) locally if needed: `npm install wrench`
 5. launch the builder: `node .`
 
