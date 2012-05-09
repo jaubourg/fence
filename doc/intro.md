@@ -80,6 +80,7 @@ Fence, of course, will return an Observable object that implements the Promise i
 | `abort`   | can be called to abort whatever it is the Fence is waiting for / doing                                                                                                                                                  |
 
 Calling `abort` will have the following consequences:
+
 1. it will abort any joined object that has an abort method
 2. it will prevent any joined callback not called already from being called
 
