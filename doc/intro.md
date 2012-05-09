@@ -47,6 +47,171 @@ What we need is a new means to join asynchronous tasks that:
 * has minimum footprint and constraints,
 * makes it easy to deal with complex task chaining (especially recursion),
 * provides a means to abort tasks when one failed,
-* returns a promise which resolve value is not set in stone (unlike `when`).
+* returns a promise with a format of its resolve value not set in stone (unlike `when`).
 
-TO CONTINUE
+## enters Fence
+
+### basics
+
+Using Fence will look like this:
+
+```javascript
+Fence(function( join, release, abort ) {
+	// Your asynchronous code
+});
+
+// OR, in the browser
+
+jQuery.Fence(function( join, release, abort ) {
+	// Your asynchronous code
+});
+```
+
+So you call the Fence function/method and give it a callback that accepts 3 functions as its parameters (we put callbacks in you functions so that you can function with your callbacks!)... Ahem...
+
+The callback given to Fence is called right away, **before** Fence returns.
+
+Fence, of course, will return an Observable object that implements the Promise interface and has an abort method that does exactly the same thing as the `abort` function listed below:
+
+| function  | what the Hell is it for?                                                                                                                                                                                                |
+|-----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `join`    | is used to "join" with promises or callbacks                                                                                                                                                                            |
+| `release` | has to be called with the resolve value that the promise returned by Fence is to be resolved with (you can release before joined tasks completed, the Fence will still wait for everything to be done before resolving) |
+| `abort`   | can be called to abort whatever it is the Fence is waiting for / doing                                                                                                                                                  |
+
+Calling `abort` will have the following consequences:
+1. it will abort any joined object that has an abort method
+2. it will prevent any joined callback not called already from being called
+
+### joining two ajax requests
+
+```javascript
+jQuery.Fence(function( join, release, abort ) {
+
+	var result = {};
+
+	join( $.ajax( myTemplateURL ).done(function( template ) {
+		result.template = template;
+	}) );
+
+	join( $.ajax( myDataURL ).done(function( data ) {
+		result.data = data;
+	}) );
+
+	release( result );
+
+}).done(function( result ) {
+	// Called when both requests succeeded
+	// result.template contains the template
+	// result.data contains the data
+});
+```
+
+It seems a bit more complicated than using `when`, so what is the gain?
+1. the resolve value of the join can have any format (you just pass it to the release callback)
+2. if one of the requests fails, then the other will be aborted automagically
+
+### timeout multiple ajax requests
+
+```javascript
+jQuery.Fence(function( join, release, abort ) {
+
+	var result = {};
+
+	$.each( myURLs, function( _, url ) {
+
+		join( $.ajax( url ).done(function( data ) {
+			result[ url ] = data;
+		}) );
+
+	});
+
+	setTimeout( abort, 5000 );
+
+	release( result );
+
+}).done(function( result ) {
+	// Called if all requests completed under 5 seconds
+});
+```
+
+The example is straight-forward:
+* we have a list of urls to request and we request all of them
+* we call abort after 5 seconds (which will abort all the outbound requests)
+
+If we wanted to have all the requests that succeeded before the call to abort, we could rewrite the code as follows:
+
+```javascript
+jQuery.Fence(function( join, release, abort ) {
+
+	var result = {};
+
+	$.each( myURLs, function( _, url ) {
+
+		join( $.ajax( url ).done(function( data ) {
+			result[ url ] = data;
+		}) );
+
+	});
+
+	setTimeout( function() {
+		abort( "cancelled", result );
+	}, 5000 );
+
+	release( myResult );
+
+}).done(function( result ) {
+	// Called if all requests completed under 5 seconds
+}).fail(function( isAbort, partialResult ) {
+	if ( isAbort === "cancelled" ) {
+		for( var url in partialResult ) {
+			console.log( url, partialResult[ url ] )
+		}
+	}
+});
+```
+
+That simple!
+
+### join callback-based services
+
+But Fence is not limited to Promises or abortable objects.
+
+For instance, here is how to get the stats of all the files in a directory using Fence:
+
+```javascript
+Fence(function( join, release, abort ) {
+	fs.readdir( dir, function( err, files ) {
+		if ( err ) {
+			abort( err );
+		} else {
+
+			var stats = {};
+
+			files.forEach(function( file ) {
+				fs.stat( path.join( dir, file ), join(function( err, stat ) {
+					if ( err ) {
+						abort( err );
+					} else {
+						stats[ file ] = stat;
+					}
+				}) ); 
+			});
+
+			release( stats );
+		}
+	}); 
+}).done(function( stats ) {
+	for( var file in stats ) {
+		console.log( file, stats[ file ] );
+	}
+}).fail(function( err ) {
+	throw err;
+});
+```
+
+You can get a much more complete example in our [`ls -R` usecase](/jaubourg/fence/blob/master/doc/use-case/ls-R.md#ls--r-in-nodejs).
+
+## that's it for now
+
+We covered pretty much everything that Fence had to offer. It may be time to head over to the [API documentation](/jaubourg/fence/blob/master/doc/API.md#api) for the details.
