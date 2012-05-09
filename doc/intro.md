@@ -109,6 +109,7 @@ jQuery.Fence(function( join, release, abort ) {
 ```
 
 It seems a bit more complicated than using `when`, so what is the gain?
+
 1. the resolve value of the join can have any format (you just pass it to the release callback)
 2. if one of the requests fails, then the other will be aborted automagically
 
