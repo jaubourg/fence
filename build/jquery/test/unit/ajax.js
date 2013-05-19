@@ -1,2 +1,0 @@
-nodeunit( "ajax", { teardown: moduleTeardown }, {
-});

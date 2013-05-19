@@ -1,1 +1,1 @@
-nodeunit( "main", { teardown: moduleTeardown }, @TEST@( jQuery.Fence, jQuery.Deferred ) );
+nodeunit( "main", { teardown: moduleTeardown }, <%= test %>( jQuery.Fence, jQuery.Deferred ) );

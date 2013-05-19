@@ -1,1 +1,1 @@
-module.exports = @FENCE@( require( "JQDeferred" ) );
+module.exports = <%= fence %>( require( "JQDeferred" ) );

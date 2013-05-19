@@ -12,16 +12,16 @@ module.exports = function( grunt ) {
 
 	grunt.initConfig({
 		meta: {
-			banner: "/*! jQuery Fence v@VERSION@ | GPLv2/MIT License */"
+			banner: "/*! jQuery Fence v<%= config.version %> | GPLv2/MIT License */"
 		},
 		build: {
-			"dist/jquery.fence.@VERSION@.js": [ "src/jquery.fence.js" ]
+			"dist/jquery.fence.<%= config.version %>.js": [ "src/jquery.fence.js" ]
 		},
 		min: {
-			"dist/jquery.fence.@VERSION@.min.js": [ "<banner>", "dist/jquery.fence.@VERSION@.js" ]
+			"dist/jquery.fence.<%= config.version %>.min.js": [ "<banner>", "dist/jquery.fence.<%= config.version %>.js" ]
 		},
 		lint: {
-			files: [ "dist/jquery.fence.@VERSION@.js" ]
+			files: [ "dist/jquery.fence.<%= config.version %>.js" ]
 		},
 		jshint: {
 			options: {

@@ -1,6 +1,2 @@
-.DS_Store
-.project
-.settings
-*~
 dist
 node_modules

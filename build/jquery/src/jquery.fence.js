@@ -1,11 +1,10 @@
 /*!
- * jQuery Fence v@VERSION@
- * @DESCRIPTION@
- * @URL@
+ * jQuery Fence v<%= config.version %>
+ * <%= config.description %>
+ * <%= config.url %>
  *
- * Copyright 2012, @AUTHOR@
- * Dual licensed under the GPL Version 2 or MIT licenses.
- * http://www.opensource.org/licenses/gpl-2.0.php
- * http://www.opensource.org/licenses/mit-license.php
+ * Copyright 2012, <%= config.author %>
+ * Licensed under the MIT license
+ * <%= config.license_url %>
  */
-jQuery.Fence = @FENCE@( jQuery.Deferred );
+jQuery.Fence = <%= fence %>( jQuery.Deferred );

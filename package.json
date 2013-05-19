@@ -1,0 +1,16 @@
+{
+	"name": "npm-demands-a-name-wish-I-could-just-list-dependencies",
+	"author": "Julian Aubourg <j@ubourg.net>",
+	"version": "0.1.0",
+	"homepage": "https://github.com/jaubourg/fence",
+	"dependencies": {
+		"lodash": "1.2.x",
+		"sylar": "0.1.x"
+	},
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "https://github.com/jaubourg/fence/LICENSE"
+		}
+	]
+}

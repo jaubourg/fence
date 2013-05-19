@@ -2,5 +2,6 @@
 	"version": "0.3.1pre",
 	"author": "Julian Aubourg <j@ubourg.net> (http://jaubourg.net/)",
 	"description": "minimal yet very useful synchronization primitive on top of jQuery Deferreds",
-	"url": "https://github.com/jaubourg/fence"
+	"url": "https://github.com/jaubourg/fence",
+	"license_url": "https://raw.github.com/jaubourg/fence/master/LICENSE"
 }

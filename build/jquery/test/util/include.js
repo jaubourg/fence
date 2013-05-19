@@ -75,6 +75,5 @@
 	loadScript( "./qunit/qunit.js" );
 	loadScript( "./util/nodeunit.js" );
 	loadScript( "./unit/main.js" );
-	loadScript( "./unit/ajax.js" );
 
 })();

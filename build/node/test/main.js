@@ -1,4 +1,4 @@
-module.exports = @TEST@(
+module.exports = <%= test %>(
 	require( "../lib/fence" ),
 	require( "JQDeferred" )
 );

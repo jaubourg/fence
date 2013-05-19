@@ -1,9 +1,9 @@
 {
 	"name": "fence",
-	"description": "@DESCRIPTION@",
-	"author": "@AUTHOR@",
-	"version": "@VERSION@",
-	"homepage": "@URL@",
+	"description": "<%= config.description %>",
+	"author": "<%= config.author %>",
+	"version": "<%= config.version %>",
+	"homepage": "<%= config.url %>",
 	"main": "lib/fence.js",
 	"dependencies": {
 		"JQDeferred": ">1.6"
@@ -16,12 +16,8 @@
 	},
 	"licenses": [
 		{
-			"type": "GPLv2",
-			"url": "http://www.opensource.org/licenses/gpl-2.0.php"
-		},
-		{
 			"type": "MIT",
-			"url": "http://www.opensource.org/licenses/mit-license.php"
+			"url": "<%= config.license_url %>"
 		}
 	]
 }
