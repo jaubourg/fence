@@ -1,5 +1,5 @@
-var fs = require("fs"),
-	path = require("path");
+var fs = require( "fs" );
+var path = require( "path" );
 
 module.exports = function inspect( file, callback ) {
 	fs.stat( file, function( err, stat ) {
@@ -12,10 +12,10 @@ module.exports = function inspect( file, callback ) {
 				if ( err ) {
 					callback( err );
 				} else {
-					var dir = {},
-						count = files.length;
+					var dir = {};
+					var count = files.length;
 					if ( count ) {
-						files.forEach(function( sub ) {
+						files.forEach( function( sub ) {
 							inspect( path.join( file, sub ), function( err, data ) {
 								if ( count ) {
 									if ( err ) {
@@ -28,13 +28,13 @@ module.exports = function inspect( file, callback ) {
 										}
 									}
 								}
-							});
-						});
+							} );
+						} );
 					} else {
 						callback( undefined, dir );
 					}
 				}
-			});
+			} );
 		}
-	});
+	} );
 };

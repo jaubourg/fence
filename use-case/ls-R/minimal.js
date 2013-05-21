@@ -1,6 +1,6 @@
-var fs = require("fs"),
-	path = require("path"),
-	Fence = require("../../dist/node/lib/fence");
+var Fence = require( "../../dist/node/lib/fence" );
+var fs = require( "fs" );
+var path = require( "path" );
 
 module.exports = function inspect( file, callback ) {
 	fs.stat( file, function( err, stat ) {
@@ -13,21 +13,17 @@ module.exports = function inspect( file, callback ) {
 				if ( err ) {
 					callback( err );
 				} else {
-					Fence(function( join, release, abort ) {
+					Fence( function( $F, release ) {
 						var dir = {};
-						files.forEach(function( sub ) {
-							inspect( path.join( file, sub ), join(function( err, data ) {
-								if ( err ) {
-									abort( err );
-								} else {
-									dir[ sub ] = data;
-								}
-							}));
-						});
+						files.forEach( function( sub ) {
+							inspect( path.join( file, sub ), $F.join.errorFirst( function( data ) {
+								dir[ sub ] = data;
+							} ) );
+						} );
 						release( undefined, dir );
-					}).always( callback );
+					} ).always( callback );
 				}
-			});
+			} );
 		}
-	});
+	} );
 };

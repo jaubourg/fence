@@ -37,8 +37,8 @@ Keep this in mind while looking at the solutions below:
 The callback-based implementation is pretty straight-forward:
 
 ```javascript
-var fs = require("fs"),
-	path = require("path");
+var fs = require( "fs" );
+var path = require( "path" );
 
 module.exports = function inspect( file, callback ) {
 	fs.stat( file, function( err, stat ) {
@@ -51,10 +51,10 @@ module.exports = function inspect( file, callback ) {
 				if ( err ) {
 					callback( err );
 				} else {
-					var dir = {},
-						count = files.length;
+					var dir = {};
+					var count = files.length;
 					if ( count ) {
-						files.forEach(function( sub ) {
+						files.forEach( function( sub ) {
 							inspect( path.join( file, sub ), function( err, data ) {
 								if ( count ) {
 									if ( err ) {
@@ -67,15 +67,15 @@ module.exports = function inspect( file, callback ) {
 										}
 									}
 								}
-							});
-						});
+							} );
+						} );
 					} else {
 						callback( undefined, dir );
 					}
 				}
-			});
+			} );
 		}
-	});
+	} );
 };
 ```
 
@@ -91,12 +91,12 @@ It does what it is supposed to do, but:
  Let's see if using Deferreds can make things a little better:
  
 ```javascript
-var fs = require( "fs" ),
-    path = require( "path" ),
-    Deferred = require( "JQDeferred" );
+var Deferred = require( "JQDeferred" );
+var fs = require( "fs" );
+var path = require( "path" );
 
 module.exports = function inspect( file ) {
-	return Deferred(function( defer ) {
+	return Deferred( function( defer ) {
 		fs.stat( file, function( err, stat ) {
 			if ( err ) {
 				defer.reject( err );
@@ -108,20 +108,20 @@ module.exports = function inspect( file ) {
 						defer.reject( err );
 					} else {
 						var dir = {};
-						Deferred.when.apply( Deferred, files.map(function( sub ) {
-							return inspect( path.join( file, sub ) ).done(function( data ) {
+						Deferred.when.apply( Deferred, files.map( function( sub ) {
+							return inspect( path.join( file, sub ) ).done( function( data ) {
 								dir[ sub ] = data;
-							});
-						}) ).done(function() {
+							} );
+						} ) ).done(function() {
 							defer.resolve( dir );
-						}).fail(function( err ) {
+						} ).fail(function( err ) {
 							defer.reject( err );
-						});
+						} );
 					}
-				});
+				} );
 			}
-		});
-	}).promise();
+		} );
+	} ).promise();
 };
 ```
 
@@ -136,50 +136,50 @@ The last point cries out for the use of [pipe](http://api.jquery.com/deferred.pi
 ## Deferred-based pipe-heavy implementation
 
 ```javascript
-var fs = require( "fs" ),
-	path = require( "path" ),
-	Deferred = require( "JQDeferred" );
+var Deferred = require( "JQDeferred" );
+var fs = require( "fs" );
+var path = require( "path" );
 
 function stat( file ) {
-	return Deferred(function( defer ) {
+	return Deferred( function( defer ) {
 		fs.stat( file, function( err, stat ) {
 			if ( err ) {
 				defer.reject( err );
 			} else {
 				defer.resolve( stat );
 			}
-		});
-	}).promise();
+		} );
+	} ).promise();
 }
 
 function readdir( file ) {
-	return Deferred(function( defer ) {
+	return Deferred( function( defer ) {
 		fs.readdir( file, function( err, files ) {
 			if ( err ) {
 				defer.reject( err );
 			} else {
 				defer.resolve( files );
 			}
-		});
-	}).promise();
+		} );
+	} ).promise();
 }
 
 module.exports = function inspect( file ) {
-	return stat( file ).pipe(function( stat ) {
+	return stat( file ).pipe( function( stat ) {
 		if ( !stat.isDirectory() ) {
 			return true;
 		}
-		return readdir( file ).pipe(function( files ) {
+		return readdir( file ).pipe( function( files ) {
 				var dir = {};
-				return Deferred.when.apply( Deferred, files.map(function( sub ) {
-					return inspect( path.join( file, sub ) ).done(function( data ) {
+				return Deferred.when.apply( Deferred, files.map( function( sub ) {
+					return inspect( path.join( file, sub ) ).done( function( data ) {
 						dir[ sub ] = data;
-					});
-				}) ).pipe(function() {
+					} );
+				} ) ).pipe(function() {
 					return dir;
-				});
-		});
-	});
+				} );
+		} );
+	} );
 };
 ```
 
@@ -198,42 +198,36 @@ All right, maybe it's time to see how Fence would fare...
 Let's go back to the basics (the [callback-based implementation](#callback-based-implementation)) and add a Fence around it:
 
 ```javascript
-var fs = require("fs"),
-	path = require("path"),
-	Fence = require("fence");
+var Fence = require( "fence" );
+var fs = require( "fs" );
+var path = require( "path" );
 
 module.exports = function inspect( file ) {
-	return Fence(function( join, release, abort ) {
-		fs.stat( file, join(function( err, stat ) {
-			if ( err ) {
-				abort( err );
-			} else if ( !stat.isDirectory() ) {
+	return Fence( function( $F, release ) {
+		fs.stat( file, $F.join.errorFirst( function( stat ) {
+			if ( !stat.isDirectory() ) {
 				release( true );
 			} else {
-				fs.readdir( file, join(function( err, files ) {
-					if ( err ) {
-						abort( err );
-					} else {
-						var dir = {};
-						files.forEach(function( sub ) {
-							inspect( path.join( file, sub ) ).done(join(function( data ) {
-								dir[ sub ] = data;
-							}));
-						});
-						release( dir );
-					}
-				}) );
+				fs.readdir( file, $F.join.errorFirst( function( files ) {
+					var dir = {};
+					files.forEach( function( sub ) {
+						inspect( path.join( file, sub ) ).done( $F.join( function( data ) {
+							dir[ sub ] = data;
+						} ) );
+					} );
+					release( dir );
+				} ) );
 			}
-		}) );
-	});
+		} ) );
+	} );
 };
 ```
 
 Not quite there yet:
 * it's about [60% slower](#performance-comparison)
 * but: no count management, no `when` trickeries, no `pipe` chains
-* as a consequence, it's less nested and, together with the use of `abort` and `release` it makes for code that is quite easy to follow
-* however, the calls to `join` are a bit sneaky at times, especially regarding the `done` callback of the nested `inspect`
+* as a consequence, it's less nested and it makes for code that is quite easy to follow
+* however, the calls to `$F.join` are a bit sneaky at times, especially regarding the `done` callback of the nested `inspect`
 
 I'd say we're getting there, except from a performance point of view.
 
@@ -242,36 +236,30 @@ I'd say we're getting there, except from a performance point of view.
 So what went wrong with the previous implementation? Well, it's quite simple: we didn't _really_ add a Fence around the [callback-based implementation](#callback-based-implementation), we added a Fence around each of its recursion. If we were to add the Fence around the whole thing, we would obtain this:
 
 ```javascript
-var fs = require("fs"),
-	path = require("path"),
-	Fence = require("fence");
+var Fence = require( "fence" );
+var fs = require( "fs" );
+var path = require( "path" );
 
 module.exports = function( filename ) {
-	return Fence(function( join, release, abort ) {
-		(function inspect( file, callback ) {
-			fs.stat( file, join(function( err, stat ) {
-				if ( err ) {
-					abort( err );
-				} else if ( !stat.isDirectory() ) {
+	return Fence( function( $F, release ) {
+		( function inspect( file, callback ) {
+			fs.stat( file, $F.join.errorFirst( function( stat ) {
+				if ( !stat.isDirectory() ) {
 					callback( true );
 				} else {
-					fs.readdir( file, join(function( err, files ) {
-						if ( err ) {
-							abort( err );
-						} else {
-							var dir = {};
-							files.forEach(function( sub ) {
-								inspect( path.join( file, sub ), join(function( data ) {
-									dir[ sub ] = data;
-								}) );
-							});
-							callback( dir );
-						}
-					}) );
+					fs.readdir( file, $F.join.errorFirst( function( files ) {
+						var dir = {};
+						files.forEach(function( sub ) {
+							inspect( path.join( file, sub ), $F.join( function( data ) {
+								dir[ sub ] = data;
+							} ) );
+						} );
+						callback( dir );
+					} ) );
 				}
-			}) );
-		})( filename, release );
-	});
+			} ) );
+		} )( filename, release );
+	} );
 };
 ```
 

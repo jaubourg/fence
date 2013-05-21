@@ -2,7 +2,7 @@
 
 A minimal yet very useful synchronization primitive on top of jQuery Deferreds that is available as a jQuery plugin client-side and a npm package for node server-side.
 
-_Latest version of Fence is version 0.3.0_
+_Latest version of Fence is version 0.4.0_
 
 ## What is it?
 
