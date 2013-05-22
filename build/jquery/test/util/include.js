@@ -71,7 +71,7 @@
 
 	params.jquery = params.jquery || "1";
 	loadScript( jQueries[ params.jquery ] || "https://ajax.googleapis.com/ajax/libs/jquery/" + params.jquery + "/jquery.min.js" );
-	loadScript( "../jquery.fence.js" );
+	loadScript( "../jquery.fence.<%= config.version %>" + ( "min" in params ? ".min" : "" ) + ".js" );
 	loadScript( "./qunit/qunit.js" );
 	loadScript( "./util/nodeunit.js" );
 	loadScript( "./unit/main.js" );

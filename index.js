@@ -1,12 +1,8 @@
+var start = new Date();
+
 var Deferred = require( "JQDeferred" );
 var sylar = require( "sylar" );
 var uglify = require( "uglify-js" ).minify;
-
-function now() {
-	return ( new Date() ).getTime();
-}
-
-var start = now();
 
 var source = Deferred();
 
@@ -27,11 +23,16 @@ sylar.template( {
 				} ).code;
 			} );
 		}
+	},
+	rename: {
+		"jquery.fence<.min>.js": function( name, data ) {
+			return name.replace( /(\.fence\.)/, "$1" + data.config.version + "." ); 
+		}
 	}
 } ).progress( function( filename ) {
 	console.log( "Handling " + filename.slice( __dirname.length + 1 ) );
 } ).done( function() {
-	console.log( "Built in " + ( now() - start ) + "ms" );
+	console.log( "Built in " + ( ( new Date() ) - start ) + "ms" );
 } ).fail( function( error ) {
 	throw error;
 } );

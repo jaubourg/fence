@@ -5,7 +5,7 @@
 	"homepage": "https://github.com/jaubourg/fence",
 	"dependencies": {
 		"JQDeferred": ">1.6",
-		"sylar": "0.2.x",
+		"sylar": "0.3.x",
 		"uglify-js": "2.3.x"
 	},
 	"licenses": [
