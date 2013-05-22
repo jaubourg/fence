@@ -1,13 +1,12 @@
 {
 	"name": "npm-demands-a-name-wish-I-could-just-list-dependencies",
 	"author": "Julian Aubourg <j@ubourg.net>",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"homepage": "https://github.com/jaubourg/fence",
 	"dependencies": {
-		"JQDeferred": "1.9.x",
-		"lodash": "1.2.x",
-		"nodeunit": "0.8.x",
-		"sylar": "0.1.x"
+		"JQDeferred": ">1.6",
+		"sylar": "0.2.x",
+		"uglify-js": "2.3.x"
 	},
 	"licenses": [
 		{

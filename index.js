@@ -1,5 +1,6 @@
-var _ = require( "lodash" );
+var Deferred = require( "JQDeferred" );
 var sylar = require( "sylar" );
+var uglify = require( "uglify-js" ).minify;
 
 function now() {
 	return ( new Date() ).getTime();
@@ -7,29 +8,28 @@ function now() {
 
 var start = now();
 
-function cutFilename( filename ) {
-	return filename.substr( __dirname.length + 1 );
-}
+var source = Deferred();
 
-var data = sylar.data( __dirname + "/" + "src" ).progress( function( filename ) {
-	console.log( "Reading data from " + cutFilename( filename ) );
-} ).fail( function( error ) {
-	throw error;
-} );
-
-sylar( {
-	base: __dirname,
+sylar.template( {
+	root: __dirname,
 	src: "build",
 	dest: "dist",
+	data: "src",
 	filter: {
-		"*": function( content ) {
-			return data.then( function( data ) {
-				return _.template( content, data );
+		"jquery.fence.js": function( content ) {
+			source.resolve( content );
+			return content;
+		},
+		"jquery.fence.min.js": function( banner ) {
+			return source.pipe( function( source ) {
+				return banner + uglify( source, {
+					fromString: true 
+				} ).code;
 			} );
 		}
 	}
 } ).progress( function( filename ) {
-	console.log( "Handling " + cutFilename( filename ) );
+	console.log( "Handling " + filename.slice( __dirname.length + 1 ) );
 } ).done( function() {
 	console.log( "Built in " + ( now() - start ) + "ms" );
 } ).fail( function( error ) {
