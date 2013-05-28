@@ -30,7 +30,7 @@ sylar.template( {
 		}
 	}
 } ).progress( function( filename ) {
-	console.log( "Handling " + filename.slice( __dirname.length + 1 ) );
+	console.log( "Handling " + filename );
 } ).done( function() {
 	console.log( "Built in " + ( ( new Date() ) - start ) + "ms" );
 } ).fail( function( error ) {
