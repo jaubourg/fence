@@ -73,7 +73,7 @@ The callback given to Fence is called right away, **before** the call to Fence r
 
 Fence, of course, will return an Observable object that implements the Promise interface and has an abort method that does exactly the same thing as the `abort` function listed below:
 
-| function / method       | what the Hell is it for? |
+| method / function       | what the Hell is it for? |
 | ----------------------- | ------------------------ |
 | `FENCE.join`            | to "join" with promises or callbacks |
 | `FENCE.join.errorFirst` | to "join" with nodejs-like callbacks with error first in the arguments |
@@ -131,7 +131,7 @@ jQuery.Fence( function( FENCE, release ) {
 
 	} );
 
-	setTimeout( abort, 5000 );
+	setTimeout( FENCE.abort, 5000 );
 
 	release( result );
 
@@ -160,17 +160,15 @@ jQuery.Fence( function( FENCE, release ) {
 	} );
 
 	setTimeout( function() {
-		abort( "cancelled", result );
+		FENCE.abort( "partial", result );
 	}, 5000 );
 
-	release( myResult );
+	release( result );
 
-} ).done( function( result ) {
-	// Called if all requests completed under 5 seconds
-} ).fail( function( isAbort, partialResult ) {
-	if ( isAbort === "cancelled" ) {
-		for( var url in partialResult ) {
-			console.log( url, partialResult[ url ] )
+} ).fail( function( reason, partial ) {
+	if ( reason === "partial" ) {
+		for( var url in partial ) {
+			console.log( url, partial[ url ] )
 		}
 	}
 } );
@@ -197,13 +195,12 @@ Fence( function( FENCE, release ) {
 		} );
 
 		release( stats );
+
 	} ) ); 
 } ).done( function( stats ) {
 	for( var file in stats ) {
 		console.log( file, stats[ file ] );
 	}
-} ).fail( function( err ) {
-	throw err;
 } );
 ```
 
